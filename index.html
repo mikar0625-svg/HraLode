@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plovoucí Pevnost: Útok Zombíků</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #050b14;
+            font-family: sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        .panel {
+            position: absolute;
+            background: rgba(10, 25, 47, 0.95);
+            border: 2px solid #38bdf8;
+            border-radius: 10px;
+            padding: 12px;
+            z-index: 10;
+            left: 10px;
+            right: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        #velitelsky-panel {
+            top: 10px;
+        }
+        #prani-panel {
+            bottom: 10px;
+        }
+        h2 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: #38bdf8;
+            text-transform: uppercase;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+        .btn {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        .prani-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <!-- Kapitánský můstek -->
+    <div id="velitelsky-panel" class="panel">
+        <h2>⚓ Kapitánský můstek (-15 let)</h2>
+        <div class="stat-row">
+            <span>Velitel:</span>
+            <strong style="color: #38bdf8;">Ty (Šéf lodi)</strong>
+        </div>
+        <div class="stat-row">
+            <span>Útok zombíků za:</span>
+            <strong style="color: #f43f5e;">15 týdnů! 🧟</strong>
+        </div>
+        <button class="btn" onclick="zavelit()">Vydat rozkaz velitele</button>
+    </div>
+
+    <!-- Panel návrhů od sledujících -->
+    <div id="prani-panel" class="panel">
+        <h2>💬 Návrhy sledujících (za follow)</h2>
+        <div id="seznam-prani">
+            <div class="prani-box" id="prani-1">
+              <span>@pepa: Postavit střešní bazén</span>
+              <button class="btn" style="width: auto; padding: 4px 8px; margin: 0;" onclick="schvalit(1)">Schválit</button>
+            </div>
+            <div class="prani-box" id="prani-2">
+              <span>@jana: Přidat obranná děla</span>
+              <button class="btn" style="width: auto; padding: 4px 8px; margin: 0;" onclick="schvalit(2)">Schválit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function zavelit() {
+            alert("Rozkaz vydán! Pevnost se připravuje.");
+        }
+        function schvalit(id) {
+            let box = document.getElementById('prani-' + id);
+            box.style.background = 'rgba(16, 185, 129, 0.3)';
+            let btn = box.querySelector('button');
+            btn.innerText = 'Postaveno! ✅';
+            btn.disabled = true;
+        }
+
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050b14);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 18, 32);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+        const sunLight = new THREE.DirectionalLight(0xfff5ea, 1);
+        sunLight.position.set(20, 30, 20);
+        scene.add(sunLight);
+
+        // Voda
+        const oceanGeo = new THREE.PlaneGeometry(150, 150, 32, 32);
+        const oceanMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.1, metalness: 0.8 });
+        const ocean = new THREE.Mesh(oceanGeo, oceanMat);
+        ocean.rotation.x = -Math.PI / 2;
+        ocean.position.y = -1;
+        scene.add(ocean);
+
+        // Loď
+        const lodSkupina = new THREE.Group();
+        
+        const trup = new THREE.Mesh(new THREE.BoxGeometry(7, 2.5, 18), new THREE.MeshStandardMaterial({ color: 0x1e293b }));
+        lodSkupina.add(trup);
+
+        const patro1 = new THREE.Mesh(new THREE.BoxGeometry(5.5, 2, 12), new THREE.MeshStandardMaterial({ color: 0x38bdf8 }));
+        patro1.position.y = 2.25;
+        lodSkupina.add(patro1);
+
+        const mustek = new THREE.Mesh(new THREE.BoxGeometry(3.5, 1.5, 3), new THREE.MeshStandardMaterial({ color: 0xe2e8f0 }));
+        mustek.position.set(0, 4, 0);
+        lodSkupina.add(mustek);
+
+        scene.add(lodSkupina);
+
+        let cas = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            cas += 0.03;
+            lodSkupina.rotation.y += 0.003;
+            lodSkupina.position.y = Math.sin(cas) * 0.15;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

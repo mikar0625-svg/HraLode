@@ -269,5 +269,5 @@ if(tgt){D+=(tgt[0]-D)*.08;H+=(tgt[1]-H)*.08;if(Math.abs(tgt[0]-D)<.1)tgt=null}
 cam.position.set(Math.cos(A)*D,6+H*D*.6,Math.sin(A)*D);cam.lookAt(0,2.5,0);
 R.render(sc,cam)}
 function rs(){R.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}
-add(S.shops.length*2);S.k+=S.shops.length*10;
+addEventListener('resize',rs);rs();upDoors();requestAnimationFrame(loop);
 </script></body></html>

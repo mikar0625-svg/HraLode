@@ -257,4 +257,17 @@ if(p.l<=0){sc.remove(p.m);p.m.geometry.dispose();p.m.material.dispose();P.splice
 // lidé
 const cnt=Math.min(40,Math.ceil(Math.sqrt(S.f)*1.2));
 ppl.forEach((g,i)=>{g.visible=i<cnt;if(g.visible){const u=g.userData;g.position.y=1.65+Math.abs(Math.sin(tm*3+u.ph))*.05;g.position.x=u.x+Math.sin(tm*.6+u.ph)*.12;g.position.z=u.z+Math.cos(tm*.5+u.ph)*.12}});
-S.shops.forEach(g=>{if(g.userData.s<1){g.userData.s=Math.min(1,g.userData.s+dt*2);g.scale.setScalar(g.userD
+                 S.shops.forEach(g=>{if(g.userData.s<1){g.userData.s=Math.min(1,g.userData.s+dt*2);g.scale.setScalar(g.userData.s)}});
+// krvavý měsíc
+const zt=S.d>=ZD;moon.material.color.lerp(zt?cRed:cMoon,.02);DLt.color.lerp(zt?lRed:lBlue,.02);
+// HUD
+$('sp').textContent=S.shops.length;$('d').textContent=S.d;$('f').textContent=fmt(S.f);$('k').textContent=fmt(S.k);
+$('db').style.width=Math.min(100,((S.d-1+S.t/DL)/ZD)*100)+'%';
+$('z').textContent=S.d<ZD?'🧟 Zombíci za '+(ZD-S.d)+' dní':'🧟 Zombíci: '+S.z.length;
+$('h').textContent=S.cold?'🥶 ZIMA':'🔥 Teplo OK';
+if(tgt){D+=(tgt[0]-D)*.08;H+=(tgt[1]-H)*.08;if(Math.abs(tgt[0]-D)<.1)tgt=null}
+cam.position.set(Math.cos(A)*D,6+H*D*.6,Math.sin(A)*D);cam.lookAt(0,2.5,0);
+R.render(sc,cam)}
+function rs(){R.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}
+addEventListener('resize',rs);rs();upDoors();requestAnimationFrame(loop);
+</script></body></html>

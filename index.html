@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kapitánský můstek – Přežití na moři</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 18px 13px;
+  background: radial-gradient(ellipse at top, #183d6a, #07172f 70%);
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+main {
+  max-width: 900px;
+  margin: auto;
+}
+
+.panel {
+  background: #102748;
+  border: 2px solid #28518a;
+  border-radius: 19px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+h1, h2 {
+  color: #58b8ff;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stat {
+  background: #1b3458;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.stat span {
+  display: block;
+  color: #b8c9e3;
+  font-size: 13px;
+}
+
+.stat strong {
+  display: block;
+  font-size: 21px;
+  margin-top: 5px;
+}
+
+.cold {
+  color: #ff6685;
+}
+
+button, .btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  border-radius: 11px;
+  background: linear-gradient(120deg,#285d9d,#3478c5);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+#scene {
+  height: 340px;
+  border-radius: 17px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  background: #102747;
+  touch-action: pan-y;
+}
+
+#scene canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hint {
+  color: #b8c9e3;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.status {
+  background: #1b3458;
+  padding: 13px;
+  border-radius: 12px;
+  margin-top: 12px;
+}
+
+label {
+  display: block;
+  margin-top: 12px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #4b6995;
+  border-radius: 10px;
+  background: #081a35;
+  color: white;
+  margin-top: 7px;
+  font-size: 15px;
+}
+
+textarea {
+  min-height: 95px;
+}
+
+footer {
+  text-align: center;
+  color: #91a8c9;
+  padding: 20px;
+}
+
+@media(max-width:480px) {
+  #scene {
+    height: 275px;
+  }
+}
+</style>
+</head>
+
+<body>
+<main>
+
+<section class="panel">
+<h1>⚓ KAPITÁNSKÝ MŮSTEK</h1>
+
+<div class="stats">
+
+<div class="stat">
+<span>Velitel</span>
+<strong>Ty – kapitán</strong>
+</div>
+
+<div class="stat">
+<span>Teplota na moři</span>
+<strong class="cold">−15 °C ❄️</strong>
+</div>
+
+<div class="stat">
+<span>GitHub followeři</span>
+<strong id="followers">Načítám...</strong>
+</div>
+
+<div class="stat">
+<span>Zásoba uhlí</span>
+<strong id="coal">Načítám...</strong>
+</div>
+
+</div>
+
+<a class="btn"
+href="https://github.com/mikaro625-svg"
+target="_blank">
+⭐ Otevřít GitHub kapitána
+</a>
+
+<p class="hint">
+Každý veřejný GitHub follower = 1 herní uhlí.
+</p>
+</section>
+
+
+<!-- 3D LOĎ -->
+
+<div id="scene"></div>
+
+<p class="hint">
+👆 Podrž prst na lodi a táhni do strany.
+Můžeš si ji otáčet.
+</p>
+
+
+<!-- ZOMBÍCI -->
+
+<section class="panel">
+
+<h2>🧟 HROZBA Z HLUBIN</h2>
+
+<div class="stats">
+
+<div class="stat">
+<span>Vodní zombíci dorazí za</span>
+<strong id="countdown" class="cold">14 dní</strong>
+</div>
+
+<div class="stat">
+<span>Stav lodi</span>
+<strong id="shipState">Připravená</strong>
+</div>
+
+</div>
+
+<div class="status" id="event">
+🌊 Moře je klidné. Posádka připravuje loď na mráz.
+</div>
+
+<p class="hint">
+Až odpočet skončí, vodní zombíci se objeví kolem lodi.
+Začne herní událost a obrana lodi!
+</p>
+
+</section>
+
+
+<!-- NÁVRHY FOLLOWERŮ -->
+
+<section class="panel">
+
+<h2>💬 PŘÁNÍ SLEDUJÍCÍCH</h2>
+
+<p class="hint">
+Co byste chtěli na lodi?
+Napište svůj nápad a kapitán rozhodne,
+jestli ho přidá.
+</p>
+
+<label>Název nápadu</label>
+
+<input
+id="ideaTitle"
+maxlength="80"
+placeholder="Např. Přidat vyhlídkovou věž">
+
+<label>Popis nápadu</label>
+
+<textarea
+id="ideaBody"
+maxlength="1200"
+placeholder="Co přesně chcete na lodi?"></textarea>
+
+<button id="sendIdea">
+📨 Poslat návrh kapitánovi
+</button>
+
+<p class="hint">
+Návrhy se odešlou přes GitHub Issues.
+Kapitán je musí nejdříve schválit.
+</p>
+
+</section>
+
+
+<!-- ROZKAZY -->
+
+<section class="panel">
+
+<h2>📜 ROZKAZY KAPITÁNA</h2>
+
+<p>
+Uhlí se přičítá podle počtu followerů.
+Ty rozhoduješ, které návrhy se dostanou do hry.
+</p>
+
+<a class="btn"
+href="https://github.com/mikaro625-svg/mikaro625-svg.github.io/issues"
+target="_blank">
+📬 Zobrazit návrhy followerů
+</a>
+
+<button id="refresh">
+🔄 Obnovit followery a uhlí
+</button>
+
+</section>
+
+<footer>
+Kapitánský můstek · Zimní výprava · 2026
+</footer>
+
+</main>
+
+
+<!-- 3D ENGINE -->
+
+<script type="module">
+
+import * as THREE from
+'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+const holder = document.getElementById('scene');
+
+try {
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x102747);
+
+const camera = new THREE.PerspectiveCamera(
+42,
+holder.clientWidth / holder.clientHeight,
+0.1,
+100
+);
+
+camera.position.set(7,6,9);
+camera.lookAt(0,0.5,0);
+
+const renderer = new THREE.WebGLRenderer({
+antialias:true
+});
+
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(holder.clientWidth,holder.clientHeight);
+renderer.shadowMap.enabled = true;
+
+holder.appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(
+0xc8e7ff,0x1b2940,2
+));
+
+const sun = new THREE.DirectionalLight(0xffffff,2.2);
+sun.position.set(5,9,6);
+sun.castShadow = true;
+scene.add(sun);
+
+const ship = new THREE.Group();
+scene.add(ship);
+
+function material(color) {
+return new THREE.MeshStandardMaterial({
+color:color,
+roughness:0.7
+});
+}
+
+function addBox(w,h,d,color,x,y,z) {
+
+const mesh = new THREE.Mesh(
+new THREE.BoxGeometry(w,h,d),
+material(color)
+);
+
+mesh.position.set(x,y,z);
+mesh.castShadow = true;
+mesh.receiveShadow = true;
+
+ship.add(mesh);
+
+return mesh;
+}
+
+
+// TRUP LODI
+
+addBox(5.6,0.8,2.2,0x263e5d,0,0,0);
+
+// PALUBA
+
+addBox(5.2,0.16,2.05,0x9a7650,0,0.48,0);
+
+// KAJUTA
+
+addBox(2.1,1.35,1.55,0x32c7e8,-0.25,1.22,0);
+
+// STŘECHA
+
+addBox(2.25,0.16,1.7,0x172a43,-0.25,1.98,0);
+
+// KOMÍN
+
+const chimney = new THREE.Mesh(
+new THREE.CylinderGeometry(0.18,0.22,0.75,16),
+material(0x172a43)
+);
+
+chimney.position.set(-1.15,2.35,0);
+ship.add(chimney);
+
+// STOŽÁR
+
+const mast = new THREE.Mesh(
+new THREE.CylinderGeometry(0.045,0.06,2.7,10),
+material(0xb58a5a)
+);
+
+mast.position.set(1.7,1.8,0);
+ship.add(mast);
+
+// VLAJKA
+
+addBox(0.85,0.42,0.06,0xffd34f,1.3,2.75,0);
+
+// OKNA
+
+for(const z of [-0.79,0.79]) {
+addBox(0.38,0.38,0.035,0x142d50,-0.25,1.35,z);
+}
+
+// MOŘE
+
+const sea = new THREE.Mesh(
+new THREE.PlaneGeometry(200,200),
+new THREE.MeshStandardMaterial({
+color:0x123e67,
+roughness:0.35
+})
+);
+
+sea.rotation.x = -Math.PI/2;
+sea.position.y = -0.62;
+scene.add(sea);
+
+
+// OTÁČENÍ LODI PRSTEM
+
+let drag = false;
+let lx = 0;
+let ly = 0;
+
+holder.addEventListener('pointerdown',e=>{
+drag = true;
+lx = e.clientX;
+ly = e.clientY;
+});
+
+window.addEventListener('pointerup',()=>{
+drag = false;
+});
+
+window.addEventListener('pointermove',e=>{
+
+if(!drag) return;
+
+ship.rotation.y += (e.clientX-lx)*0.009;
+
+ship.rotation.x = Math.max(
+-0.25,
+Math.min(
+0.25,
+ship.rotation.x+(e.clientY-ly)*0.003
+)
+);
+
+lx = e.clientX;
+ly = e.clientY;
+
+});
+
+
+// ANIMACE
+
+function animate() {
+
+requestAnimationFrame(animate);
+
+if(!drag) {
+ship.rotation.y += 0.0018;
+}
+
+ship.position.y = Math.sin(Date.now()*0.0012)*0.045;
+
+renderer.render(scene,camera);
+
+}
+
+animate();
+
+
+// ZMĚNA VELIKOSTI
+
+new ResizeObserver(()=>{
+
+const w = holder.clientWidth;
+const h = holder.clientHeight;
+
+camera.aspect = w/h;
+camera.updateProjectionMatrix();
+
+renderer.setSize(w,h);
+
+}).observe(holder);
+
+} catch(error) {
+
+holder.innerHTML =
+'<p style="padding:20px">3D loď se nepodařilo načíst. Zkontroluj internet.</p>';
+
+}
+
+</script>
+
+
+<!-- FOLLOWEŘI A UHLÍ -->
+
+<script>
+
+async function loadFollowers() {
+
+const f = document.getElementById('followers');
+const c = document.getElementById('coal');
+
+f.textContent = 'Načítám...';
+c.textContent = '...';
+
+try {
+
+const response = await fetch(
+'https://api.github.com/users/mikaro625-svg'
+);
+
+if(!response.ok) throw Error();
+
+const data = await response.json();
+
+const count = Number(data.followers) || 0;
+
+f.textContent = count.toLocaleString('cs-CZ');
+
+c.textContent =
+count.toLocaleString('cs-CZ') + ' 🪨';
+
+} catch(error) {
+
+f.textContent = 'Nedostupné';
+c.textContent = '—';
+
+}
+
+}
+
+document.getElementById('refresh')
+.addEventListener('click',loadFollowers);
+
+loadFollowers();
+
+
+// ODPOČET 14 DNÍ
+
+const arrival = new Date(
+'2026-11-15T15:37:00+01:00'
+).getTime();
+
+function countdown() {
+
+const diff = arrival - Date.now();
+
+const out = document.getElementById('countdown');
+
+if(diff <= 0) {
+
+out.textContent = 'DORAZILI!';
+
+document.getElementById('shipState')
+.textContent = 'Obléhání';
+
+document.getElementById('event')
+.textContent =
+'🧟 Vodní zombíci dorazili z moře! Začíná obrana lodi.';
+
+return;
+
+}
+
+const days = Math.floor(diff/86400000);
+
+const hours = Math.floor(
+(diff%86400000)/3600000
+);
+
+const minutes = Math.floor(
+(diff%3600000)/60000
+);
+
+const seconds = Math.floor(
+(diff%60000)/1000
+);
+
+out.textContent =
+`${days} d ${hours} h ${minutes} min ${seconds} s`;
+
+}
+
+countdown();
+setInterval(countdown,1000);
+
+
+// ODESÍLÁNÍ NÁVRHŮ
+
+document.getElementById('sendIdea')
+.addEventListener('click',()=>{
+
+const title =
+document.getElementById('ideaTitle').value.trim();
+
+const body =
+document.getElementById('ideaBody').value.trim();
+
+if(!title || !body) {
+
+alert('Vyplň název i popis nápadu.');
+
+return;
+
+}
+
+const issueUrl =
+'https://github.com/mikaro625-svg/mikaro625-svg.github.io/issues/new';
+
+const url = issueUrl +
+'?title=' + encodeURIComponent(
+'Nápad od followera: ' + title
+) +
+'&body=' + encodeURIComponent(
+body + '\n\nNávrh z webu Kapitánský můstek.'
+);
+
+window.open(url,'_blank','noopener');
+
+});
+
+</script>
+
+</body>
+</html>

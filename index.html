@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dům vs Zombíci - Registrace & Žádosti</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0b0d12;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            background: #141824;
+            border: 2px solid #2a324b;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff4500, #ff8c00, #00ff88);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #ff8c00;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(255, 140, 0, 0.4);
+        }
+
+        .header p {
+            font-size: 13px;
+            color: #8a99ad;
+        }
+
+        .velitel-badge {
+            background: #1f273d;
+            border: 1px solid #3b486b;
+            padding: 10px 15px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .velitel-title {
+            font-size: 11px;
+            color: #8a99ad;
+            text-transform: uppercase;
+        }
+
+        .velitel-name {
+            font-size: 15px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .stats-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .stat-item {
+            background: #1a2030;
+            border: 1px solid #2e3852;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffaa00;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #7a8b9e;
+            margin-top: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #a0aec0;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: #0d1017;
+            border: 1px solid #2e3852;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+            resize: vertical;
+        }
+
+        input[type="text"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #ff8c00;
+            box-shadow: 0 0 8px rgba(255, 140, 0, 0.3);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff4500, #ff8c00);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 69, 0, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(255, 69, 0, 0.5);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .reward-info {
+            background: rgba(0, 255, 136, 0.08);
+            border: 1px dashed #00ff88;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 12px;
+            color: #00ff88;
+            margin-bottom: 20px;
+        }
+
+        .success-message {
+            display: none;
+            background: #00ff88;
+            color: #0d1017;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 11px;
+            color: #5a6b7c;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🏙️ Dům vs Zombíci</h1>
+        <p>Stavěj základnu se svými sledujícími!</p>
+    </div>
+
+    <div class="velitel-badge">
+        <div>
+            <div class="velitel-title">Hlavní Velitel</div>
+            <div class="velitel-name">dum_vszombiku</div>
+        </div>
+        <div style="font-size: 20px;">👑</div>
+    </div>
+
+    <div class="stats-box">
+        <div class="stat-item">
+            <div class="stat-value" id="zali-uhli">20 Uhlí</div>
+            <div class="stat-label">Za 1 Follower</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">30 Uhlí</div>
+            <div class="stat-label">Cena Stavby</div>
+        </div>
+    </div>
+
+    <div class="reward-info">
+        ✨ Daj follow, zadej jméno a získej +20 Uhlí pro stavbu!
+    </div>
+
+    <form id="buildForm">
+        <div class="form-group">
+            <label for="igName">Tvé Instagram Jméno</label>
+            <input type="text" id="igName" placeholder="@tvoje_jmeno" required />
+        </div>
+
+        <div class="form-group">
+            <label for="buildingType">Co chceš postavit?</label>
+            <select id="buildingType" required>
+                <option value="Policie 🚨">Policejní Stanice (🚨)</option>
+                <option value="Zbrojnice ⚔️">Zbrojnice & Zbraně (⚔️)</option>
+                <option value="Bufet a Chlast 🍺">Bufet & Chlast (🍺)</option>
+                <option value="Postele 🛏️">Postele pro lidi (🛏️)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="message">Upřesnění / Vzkaz pro Velitele</label>
+            <textarea id="message" rows="2" placeholder="Např. Postav to do 2. patra!"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Odeslat Žádost Veliteli 🚀</button>
+    </form>
+
+    <div class="success-message" id="successMsg">
+        ✅ Žádost odeslána! Velitel dum_vszombiku obdržel tvé přání.
+    </div>
+
+    <div class="footer">
+        Dům vs Zombíci Mini Game • Připraveno pro Netlify & Instagram
+    </div>
+</div>
+
+<script>
+    document.getElementById('buildForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById('igName').value;
+        const type = document.getElementById('buildingType').value;
+
+        console.log('Žádost odeslána:', { name, type });
+
+        document.getElementById('buildForm').style.display = 'none';
+        document.getElementById('successMsg').style.display = 'block';
+    });
+</script>
+
+</body>
+</html>
